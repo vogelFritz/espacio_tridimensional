@@ -1,0 +1,67 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  overflow: hidden;
+}
+
+body {
+  font-family: monospace, sans-serif;
+  font-size: 1.5rem;
+  height: 100vh;
+  width: 100vw;
+  background-color:cadetblue;
+  display: grid;
+  grid-template-rows: 1fr 9fr 1fr;
+}
+
+header {
+  background-color:brown;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+main {
+  background-color:aquamarine;
+  display: grid;
+  grid-template-columns: 1fr 12fr 1fr;
+}
+
+.pared {
+  background-color: brown;
+}
+
+.grafico {
+  position: relative;
+  background-color:darkcyan;
+  overflow: hidden;
+}
+
+.punto {
+  background-color: beige;
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+
+.linea {
+  background-color: green;
+  position: absolute;
+  height: 5px;
+  transform-origin: top left;
+}
+
+.triangulo {
+  background-color: blue;
+  position: absolute;
+  transform-origin: top left;
+}
+
+footer {
+  background-color: brown;
+}

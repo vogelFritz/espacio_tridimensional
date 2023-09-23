@@ -6,6 +6,9 @@ let espacio = new Espacio(),
     obs = new Observador( new PuntoR3( 0, 0, 50 ), new PuntoR3( 0, 0, -1 ), new PuntoR3( 1, 0, 0 ), new PuntoR3( 0, 1, 0 ) );
 
 espacio.agregarPunto( new PuntoR3( 0, 0, 0 ) );
+espacio.agregarPunto( new PuntoR3( 20, 20, 0 ) );
+espacio.agregarPunto( new PuntoR3( 20, -20, 0 ) );
+espacio.agregarPunto( new PuntoR3( 40, 0, 0 ) );
 espacio.agregarTriangulo( new PuntoR3( 20, 20, 0 ), new PuntoR3( 20, -20, 0 ), new PuntoR3( 40, 0, 0 ) );
 
 grafico.render( espacio, obs );

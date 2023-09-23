@@ -183,18 +183,27 @@ export class Triangulo {
         this.ver3 = ver3;
         this.divHTML = document.createElement('div');
         this.divHTML.className = 'triangulo';
-        this.divHTML.style.top = `${ posGraficoY( ver1.y - 2.5 ) }px`;
-        this.divHTML.style.left = `${ posGraficoX( ver1.x + 2.5 ) }px`;
         this.divHTML.style.width = `${ width }px`;
-        this.divHTML.style.transform = `rotate(${ Math.atan2( -deltaY, deltaX ) }rad)`; // Ángulo mayor a 90º -> problemas
         aux1 = (deltaY2 * u.x - deltaX2 * u.y) / (v.y * u.x - v.x * u.y);
-        this.divHTML.style.height = `${ Math.abs(aux1) }px`; // por ahí conviene agregar valor absoluto
         if(u.x != 0)
             aux2 = (deltaX2 - aux1 * v.x) / u.x;
         else
             aux2 = (deltaY2 - aux1 * v.y) / u.y;
-        this.divHTML.style.borderLeft = `${ Math.abs(aux2) }px solid transparent`;
-        this.divHTML.style.borderRight = `${ width - Math.abs(aux2) }px solid transparent`;
+        if(aux1 > 0) {
+            this.divHTML.style.top = `${ posGraficoY( ver1.y - 2.5 ) }px`;
+            this.divHTML.style.left = `${ posGraficoX( ver1.x + 2.5 ) }px`;
+            this.divHTML.style.transform = `rotate(${ Math.atan2( -deltaY, deltaX ) }rad)`; // Ángulo mayor a 90º -> problemas
+            this.divHTML.style.borderLeft = `${ Math.abs(aux2) }px solid transparent`;
+            this.divHTML.style.borderRight = `${ width - Math.abs(aux2) }px solid transparent`;
+        }
+        else {
+            this.divHTML.style.top = `${ posGraficoY( ver2.y - 2.5 ) }px`;
+            this.divHTML.style.left = `${ posGraficoX( ver2.x + 2.5 ) }px`;
+            this.divHTML.style.transform = `rotate(${ Math.atan2( -deltaY, deltaX ) + Math.PI }rad)`;
+            this.divHTML.style.borderRight = `${ Math.abs(aux2) }px solid transparent`;
+            this.divHTML.style.borderLeft = `${ width - Math.abs(aux2) }px solid transparent`;
+        }
+        this.divHTML.style.height = `${ Math.abs(aux1) }px`; // por ahí conviene agregar valor absoluto
         this.divHTML.style.borderTop = `${ Math.abs(aux1) }px solid blue`;
     }
 }

@@ -1,4 +1,4 @@
-import { prodConEscalar, sumaVec, convertirAUnitario, prodVectorial } from '../operaciones/operaciones_vectores';
+import { prodConEscalar, sumaVec, convertirAUnitario, prodVectorial, vectorOpuesto } from '../operaciones/operaciones_vectores';
 
 const grafico = document.querySelector('.grafico');
 const posGraficoX = ( x ) => grafico.offsetWidth / 2. + x;
@@ -24,12 +24,16 @@ export class Espacio {
         this.puntos.push( ptoR3 );
     }
 
-    agregarTriangulo( triangulo ) {
-        this.triangulos.push(triangulo.puntos);
+    agregarTriangulo( pto1, pto2, pto3 ) {
+        let puntos = [];
+        puntos.push( pto1, pto2, pto3 );
+        this.triangulos.push(puntos);
     }
 
-    agregarLinea( linea ) {
-        this.lineas.push( linea.puntos );
+    agregarLinea( pto1, pto2 ) {
+        let puntos = [];
+        puntos.push( pto1, pto2 );
+        this.lineas.push( puntos );
     }
 
 }
@@ -39,8 +43,8 @@ export class Observador {
     dir;
     u;
     v;
-    static angGiro = 0.08819;
-    static pasoAvance = 1;
+    angGiro = 0.08819; // static generaba errores (cuidado al usar propiedades static adentro de funciones)
+    pasoAvance = 1;
     constructor(pos, dir, u, v) {
         this.pos = pos;
         this.dir = dir;
@@ -49,46 +53,46 @@ export class Observador {
     }
 
     girarArriba( ) {
-        const vecGiro = prodConEscalar(v, this.angGiro);
-        obs.dir = sumaVec( obs.dir, vecGiro );
-        obs.dir = convertirAUnitario( obs.dir );
-        v = prodVectorial( obs.dir, u );
+        const vecGiro = prodConEscalar(this.v, this.angGiro);
+        this.dir = sumaVec( this.dir, vecGiro );
+        this.dir = convertirAUnitario( this.dir );
+        this.v = prodVectorial( this.dir, this.u );
     }
     girarAbajo( ) {
-        const vecGiro = prodConEscalar( vectorOpuesto(v), this.angGiro );
-        obs.dir = sumaVec( obs.dir, vecGiro );
-        obs.dir = convertirAUnitario( obs.dir );
-        v = prodVectorial( obs.dir, u );
+        const vecGiro = prodConEscalar( vectorOpuesto(this.v), this.angGiro );
+        this.dir = sumaVec( this.dir, vecGiro );
+        this.dir = convertirAUnitario( this.dir );
+        this.v = prodVectorial( this.dir, this.u );
     }
     girarIzq( ) {
-        const vecGiro = prodConEscalar( u, this.angGiro );
-        obs.dir = sumaVec( obs.dir, vecGiro );
-        obs.dir = convertirAUnitario( obs.dir );
-        u = prodVectorial( v, obs.dir );
+        const vecGiro = prodConEscalar( this.u, this.angGiro );
+        this.dir = sumaVec( this.dir, vecGiro );
+        this.dir = convertirAUnitario( this.dir );
+        this.u = prodVectorial( this.v, this.dir );
     }
     girarDer( ) {
-        const vecGiro = prodConEscalar( vectorOpuesto(u), this.angGiro );
-        obs.dir = sumaVec( obs.dir, vecGiro );
-        obs.dir = convertirAUnitario( obs.dir );
-        u = prodVectorial( v, obs.dir );
+        const vecGiro = prodConEscalar( vectorOpuesto(this.u), this.angGiro );
+        this.dir = sumaVec( this.dir, vecGiro );
+        this.dir = convertirAUnitario( this.dir );
+        this.u = prodVectorial( this.v, this.dir );
     }
     avanzar( ) {
-        const vecAvance = prodConEscalar( obs.dir, this.pasoAvance );
-        obs.pos = sumaVec( obs.pos, vecAvance );
+        const vecAvance = prodConEscalar( this.dir, this.pasoAvance );
+        this.pos = sumaVec( this.pos, vecAvance );
     }
     
     retroceder( ) {
-        const vecRet = prodConEscalar( obs.dir, -this.pasoAvance );
-        obs.pos = sumaVec( obs.pos, vecRet );
+        const vecRet = prodConEscalar( this.dir, -this.pasoAvance );
+        this.pos = sumaVec( this.pos, vecRet );
     }
     
     moverIzq( ) {
-        const vecAvance = prodConEscalar( u, this.pasoAvance );
-        obs.pos = sumaVec( obs.pos, vecAvance );
+        const vecAvance = prodConEscalar( this.u, this.pasoAvance );
+        this.pos = sumaVec( this.pos, vecAvance );
     }
     moverDer( ) {
-        const vecAvance = prodConEscalar( u, -this.pasoAvance );
-        obs.pos = sumaVec( obs.pos, vecAvance );
+        const vecAvance = prodConEscalar( this.u, -this.pasoAvance );
+        this.pos = sumaVec( this.pos, vecAvance );
     }
 
 }
@@ -162,14 +166,14 @@ export class Triangulo {
     ver3;
     puntos = []
     divHTML;
-    constructor( ver1, ver2, ver3 ) {
+    constructor( ver1, ver2, ver3) {
         this.puntos.push( ver1.ptoR3, ver2.ptoR3, ver3.ptoR3 );
         const deltaX = ver2.x - ver1.x,
               deltaY = ver2.y - ver1.y,
               deltaX2 = ver3.x - ver1.x,
               deltaY2 = ver3.y - ver1.y;
-        let u = new Punto( deltaX, deltaY ),
-            v = new Punto( deltaY, -deltaX ),
+        let u = new PuntoR3( deltaX, deltaY, 0 ),
+            v = new PuntoR3( deltaY, -deltaX, 0 ),
             aux1,
             aux2, width = Math.sqrt( deltaX ** 2. + deltaY ** 2. );
         u = convertirAUnitario( u );
@@ -184,11 +188,14 @@ export class Triangulo {
         this.divHTML.style.width = `${ width }px`;
         this.divHTML.style.transform = `rotate(${ Math.atan2( -deltaY, deltaX ) }rad)`; // Ángulo mayor a 90º -> problemas
         aux1 = (deltaY2 * u.x - deltaX2 * u.y) / (v.y * u.x - v.x * u.y);
-        this.divHTML.style.height = `${ aux1 }px`; // por ahí conviene agregar valor absoluto
-        aux2 = (deltaX2 - aux1 * v.x) / u.x;
-        this.divHTML.style.borderLeft = `${ aux2 }px solid transparent`;
-        this.divHTML.style.borderRight = `${ width - aux2 }px solid transparent`;
-        this.divHTML.style.borderTop = `${ aux1 }px solid blue`;
+        this.divHTML.style.height = `${ Math.abs(aux1) }px`; // por ahí conviene agregar valor absoluto
+        if(u.x != 0)
+            aux2 = (deltaX2 - aux1 * v.x) / u.x;
+        else
+            aux2 = (deltaY2 - aux1 * v.y) / u.y;
+        this.divHTML.style.borderLeft = `${ Math.abs(aux2) }px solid transparent`;
+        this.divHTML.style.borderRight = `${ width - Math.abs(aux2) }px solid transparent`;
+        this.divHTML.style.borderTop = `${ Math.abs(aux1) }px solid blue`;
     }
 }
 
@@ -206,12 +213,12 @@ export class Grafico {
         });
     
         espacio.triangulos.forEach( elem => {
-            const triangulo = new Triangulo( new PuntoR2(elem.puntos[0], obs), new PuntoR2(elem.puntos[1], obs), new PuntoR2(elem.puntos[2], obs) );
+            const triangulo = new Triangulo( new PuntoR2(elem[0], obs), new PuntoR2(elem[1], obs), new PuntoR2(elem[2], obs) );
             this.divHTML.append( triangulo.divHTML );
         });
     
         espacio.lineas.forEach( elem => {
-            const linea = new LineaR2( new PuntoR2( elem.puntos[0], obs ), new PuntoR2( elem.puntos[1] ), obs );
+            const linea = new LineaR2( new PuntoR2( elem[0], obs ), new PuntoR2( elem[1] ), obs );
             this.divHTML.append( linea.divHTML );
         });
     

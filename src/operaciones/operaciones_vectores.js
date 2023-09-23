@@ -1,3 +1,5 @@
+import { PuntoR3 } from "../clases/clases";
+
 export const convertirAUnitario = ( vec ) => {
     const aux = Math.sqrt( 1. / (vec.x ** 2. + vec.y ** 2. + vec.z ** 2.) );
     let vecUnitario = new PuntoR3(vec.x * aux, vec.y * aux, vec.z * aux);

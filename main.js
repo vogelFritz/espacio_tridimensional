@@ -37,5 +37,4 @@ grafico.divHTML.addEventListener("keydown", (e) => {
             break;
     }
     grafico.render( espacio, obs );
-    console.log(obs);
 });

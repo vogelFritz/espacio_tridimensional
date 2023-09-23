@@ -165,6 +165,7 @@ export class Triangulo {
     ver2;
     ver3;
     puntos = []
+    visible = false;
     divHTML;
     constructor( ver1, ver2, ver3) {
         this.puntos.push( ver1.ptoR3, ver2.ptoR3, ver3.ptoR3 );
@@ -205,6 +206,8 @@ export class Triangulo {
         }
         this.divHTML.style.height = `${ Math.abs(aux1) }px`; // por ahí conviene agregar valor absoluto
         this.divHTML.style.borderTop = `${ Math.abs(aux1) }px solid blue`;
+        if(ver1.visible || ver2.visible || ver3.visible)
+            this.visible = true;
     }
 }
 
@@ -218,12 +221,14 @@ export class Grafico {
         this.divHTML.replaceChildren('');
         espacio.puntos.forEach( elem => {
             const ptoR2 = new PuntoR2( elem, obs )
-            this.divHTML.append( ptoR2.divHTML );
+            if(ptoR2.visible)
+                this.divHTML.append( ptoR2.divHTML );
         });
     
         espacio.triangulos.forEach( elem => {
             const triangulo = new Triangulo( new PuntoR2(elem[0], obs), new PuntoR2(elem[1], obs), new PuntoR2(elem[2], obs) );
-            this.divHTML.append( triangulo.divHTML );
+            if(triangulo.visible)
+                this.divHTML.append( triangulo.divHTML );
         });
     
         espacio.lineas.forEach( elem => {

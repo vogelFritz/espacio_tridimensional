@@ -52,26 +52,26 @@ export class Observador {
         this.v = v;
     }
 
-    girarArriba( ) {
-        const vecGiro = prodConEscalar(this.v, this.angGiro);
+    girarArriba( angulo ) {
+        const vecGiro = prodConEscalar(this.v, this.angGiro * (-angulo) );
         this.dir = sumaVec( this.dir, vecGiro );
         this.dir = convertirAUnitario( this.dir );
         this.v = prodVectorial( this.dir, this.u );
     }
-    girarAbajo( ) {
-        const vecGiro = prodConEscalar( vectorOpuesto(this.v), this.angGiro );
+    girarAbajo( angulo ) {
+        const vecGiro = prodConEscalar( vectorOpuesto(this.v), this.angGiro * angulo );
         this.dir = sumaVec( this.dir, vecGiro );
         this.dir = convertirAUnitario( this.dir );
         this.v = prodVectorial( this.dir, this.u );
     }
-    girarIzq( ) {
-        const vecGiro = prodConEscalar( this.u, this.angGiro );
+    girarIzq( angulo ) {
+        const vecGiro = prodConEscalar( this.u, this.angGiro * angulo );
         this.dir = sumaVec( this.dir, vecGiro );
         this.dir = convertirAUnitario( this.dir );
         this.u = prodVectorial( this.v, this.dir );
     }
-    girarDer( ) {
-        const vecGiro = prodConEscalar( vectorOpuesto(this.u), this.angGiro );
+    girarDer( angulo ) {
+        const vecGiro = prodConEscalar( vectorOpuesto(this.u), this.angGiro * -angulo );
         this.dir = sumaVec( this.dir, vecGiro );
         this.dir = convertirAUnitario( this.dir );
         this.u = prodVectorial( this.v, this.dir );
@@ -87,11 +87,11 @@ export class Observador {
     }
     
     moverIzq( ) {
-        const vecAvance = prodConEscalar( this.u, this.pasoAvance );
+        const vecAvance = prodConEscalar( this.u, -this.pasoAvance );
         this.pos = sumaVec( this.pos, vecAvance );
     }
     moverDer( ) {
-        const vecAvance = prodConEscalar( this.u, -this.pasoAvance );
+        const vecAvance = prodConEscalar( this.u, this.pasoAvance );
         this.pos = sumaVec( this.pos, vecAvance );
     }
 
